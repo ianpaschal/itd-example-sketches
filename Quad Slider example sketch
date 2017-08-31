@@ -1,0 +1,86 @@
+
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h>
+#endif
+
+//Which pin is the neopixel connected to
+#define LED 4
+
+//How many pixels does the neopixel have
+#define NUMPIXELS 4
+
+// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
+// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
+// example for more information on possible values.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, LED, NEO_GRB + NEO_KHZ800);
+
+//Defining pins for the sliders 
+int slider1 = A0;
+int slider2 = A1;
+int slider3 = A2;
+int slider4 = A3;
+
+//initialising slider position integers
+int position1;
+int position2;
+int position3;
+int position4;
+
+//initialising LED values
+int R;
+int G;
+int B;
+int blinkSpeed;
+
+void setup() {
+
+  //Setting the pins to input mode
+  pinMode(slider1, INPUT);
+  pinMode(slider2, INPUT);
+  pinMode(slider3, INPUT);
+  pinMode(slider4, INPUT);
+
+  Serial.begin(9600);
+
+  pixels.begin(); // This initializes the NeoPixel library.
+}
+
+void loop() {
+
+  //This reads the values of each slider
+  position1 = analogRead(slider1);
+  position2 = analogRead(slider2);
+  position3 = analogRead(slider3);
+  position4 = analogRead(slider4);
+
+  //The sliders give values between 1 and 1024. Here these are set to a range 
+  //between 0 and 255 which can be used for the LEDs
+  R = map(position1, 1, 1023, 1, 255);
+  G = map(position2, 1, 1023, 1, 255);
+  B = map(position3, 1, 1023, 1, 255);
+  blinkSpeed = map(position4, 1, 1023, 1000, 0);
+
+  Serial.println(R);
+  Serial.println(G);
+  Serial.println(B);
+
+    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+    pixels.setPixelColor(0, pixels.Color(R,G,B)); // Set color based on sliders.
+    pixels.setPixelColor(1, pixels.Color(R,G,B)); // Set color based on sliders.
+    pixels.setPixelColor(2, pixels.Color(R,G,B)); // Set color based on sliders.
+    pixels.setPixelColor(3, pixels.Color(R,G,B)); // Set color based on sliders.
+
+    pixels.show(); // This sends the updated pixel color to the hardware.
+
+    delay(blinkSpeed);
+
+    pixels.setPixelColor(0, pixels.Color(0,0,0)); // Set color based on sliders.
+    pixels.setPixelColor(1, pixels.Color(0,0,0)); // Set color based on sliders.
+    pixels.setPixelColor(2, pixels.Color(0,0,0)); // Set color based on sliders.
+    pixels.setPixelColor(3, pixels.Color(0,0,0)); // Set color based on sliders.
+
+    pixels.show(); // This sends the updated pixel color to the hardware.
+
+    delay(blinkSpeed);
+  }
